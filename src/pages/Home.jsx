@@ -11,7 +11,8 @@ const Home = () => {
   const [difficulty, setDifficulty] = useState(null);
   const [type, setType] = useState(null);
 
-  const { questions, setQuestions } = useContext(MyContext);
+  const { setQuestions } = useContext(MyContext);
+  const { setTotalScore } = useContext(MyContext);
 
   const getQuestions = async (category, amount, difficulty, type) => {
     try {
@@ -23,6 +24,8 @@ const Home = () => {
           console.log(result);
           setQuestions(result.data.results);
         });
+
+      setTotalScore(amount * 5);
     } catch (error) {
       console.log(error);
     }
@@ -42,12 +45,11 @@ const Home = () => {
         Interesting quizzes with tons of categories
       </h3>
 
-      <div className="flex flex-col items-start gap-4">
-        <div className="flex items-center justify-start gap-2">
-          <label htmlFor="amount">Number of Questions</label>
+      <div className="flex flex-col gap-4 w-1/3">
+        <div className="flex items-center justify-between gap-2">
           <input
             onChange={(e) => setAmount(parseInt(e.target.value))}
-            className="rounded-md shadow-md p-1 bg-white"
+            className="rounded-md shadow-md p-2 w-full bg-white"
             type="number"
             name="amount"
             id="amount"
@@ -55,10 +57,9 @@ const Home = () => {
           />
         </div>
         <div className="flex items-center justify-start gap-2">
-          <label htmlFor="categories">Categories</label>
           <select
             name=""
-            className="rounded-md shadow-md p-1"
+            className="rounded-md shadow-md p-2 w-full"
             id="categories"
             onChange={(e) => setCategory(parseInt(e.target.value))}
           >
@@ -74,10 +75,9 @@ const Home = () => {
           </select>
         </div>
         <div className="flex items-center justify-start gap-2">
-          <label htmlFor="difficulty">Difficulty</label>
           <select
             name=""
-            className="rounded-md shadow-md p-1"
+            className="rounded-md shadow-md p-2 w-full"
             id="difficulty"
             onChange={(e) => setDifficulty(e.target.value)}
           >
@@ -96,10 +96,9 @@ const Home = () => {
           </select>
         </div>
         <div className="flex items-center justify-start gap-2">
-          <label htmlFor="type">Type</label>
           <select
             name=""
-            className="rounded-md shadow-md p-1"
+            className="rounded-md shadow-md p-2 w-full"
             id="type"
             onChange={(e) => setType(e.target.value)}
           >
