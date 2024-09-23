@@ -5,61 +5,75 @@ import { Link } from "react-router-dom";
 const Questions = () => {
   const { questions } = useContext(MyContext);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  console.log("Questions page: ", questions);
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
 
+  // Shuffle options only when the currentQuestion changes
+  useEffect(() => {
+    if (questions) {
+      const options = [...questions[currentQuestion].incorrect_answers];
+      const randomIndex = Math.floor(Math.random() * (options.length + 1));
+      options.splice(randomIndex, 0, questions[currentQuestion].correct_answer);
+      setShuffledOptions(options); // Store shuffled options in state
+    }
+  }, [currentQuestion, questions]);
+
+  // Handle option selection
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    setIsCorrect(option === questions[currentQuestion].correct_answer);
+  };
+
+  // Handle "Next" button click
   const handleNext = () => {
-    if (currentQuestion === questions.length - 1) {
-      console.log("Last question!");
-    } else {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      resetState();
     }
   };
 
+  // Reset state when moving to next question
+  const resetState = () => {
+    setIsCorrect(null);
+    setSelectedOption(null);
+  };
+
+  // Handle submission
   const handleSubmit = () => {
     console.log("Submit button clicked");
   };
-
-  // let options = [];
-
-  // useEffect(() => {
-  //   if (questions) {
-  //     options = questions[currentQuestion].incorrect_answers;
-
-  //     const randomIndex = Math.floor(Math.random() * (options.length + 1));
-
-  //     const valueToInsert = questions[currentQuestion].correct_answer;
-  //     options.splice(randomIndex, 0, valueToInsert);
-
-  //     console.log("options: ", options);
-  //   }
-  // }, []);
 
   return (
     <div className="w-full h-screen bg-[wheat]">
       <h1 className="p-2 mb-10 text-2xl font-semibold text-center">
         Questions
       </h1>
-      <div className="flex flex-col items-start w-1/2 px-4 py-5 mx-auto border border-orange-500 rounded-md shadow-md">
+      <div className="flex flex-col items-start w-1/2 px-4 py-5 mx-auto border border-orange-500 rounded-md shadow-md text-wrap">
         {questions ? (
           <>
-            <h1 className="mb-10 text-lg font-semibold text-start">
+            <h1 className="w-full mb-10 text-lg font-semibold text-start text-wrap">
               {questions[currentQuestion].question}
             </h1>
 
             <div className="flex flex-col items-start gap-5">
-              {questions[currentQuestion].incorrect_answers.map(
-                (data, index) => {
-                  return (
-                    <button
-                      className={`border border-orange-500 rounded-md p-2 text-lg bg-white text-orange-600`}
-                      key={index}
-                      onClick={() => console.log("selected: ", data)}
-                    >
-                      {data}
-                    </button>
-                  );
-                }
-              )}
+              {shuffledOptions.map((option, index) => (
+                <button
+                  key={index}
+                  disabled={selectedOption !== null} // Disable after selection
+                  className={`border border-orange-500 rounded-md p-2 text-lg
+                    ${
+                      selectedOption === option
+                        ? isCorrect
+                          ? "text-white bg-green-500"
+                          : "text-white bg-red-500"
+                        : "bg-white text-orange-600"
+                    }`}
+                  onClick={() => handleOptionClick(option)}
+                >
+                  {option}
+                </button>
+              ))}
             </div>
           </>
         ) : (
@@ -67,9 +81,10 @@ const Questions = () => {
             Loading...
           </h1>
         )}
+
         <Link
           to={currentQuestion === questions?.length - 1 ? "/result" : null}
-          className={`font-semibold text-lg py-2 px-3 rounded-md shadow-md uppercase bg-orange-500 text-white mt-10`}
+          className="px-3 py-2 mt-10 text-lg font-semibold text-white uppercase bg-orange-500 rounded-md shadow-md"
           onClick={() =>
             currentQuestion === questions?.length - 1
               ? handleSubmit()
