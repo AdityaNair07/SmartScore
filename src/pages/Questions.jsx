@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MyContext } from "../MyContext";
 import { Link } from "react-router-dom";
 
@@ -19,18 +19,34 @@ const Questions = () => {
     console.log("Submit button clicked");
   };
 
+  // let options = [];
+
+  // useEffect(() => {
+  //   if (questions) {
+  //     options = questions[currentQuestion].incorrect_answers;
+
+  //     const randomIndex = Math.floor(Math.random() * (options.length + 1));
+
+  //     const valueToInsert = questions[currentQuestion].correct_answer;
+  //     options.splice(randomIndex, 0, valueToInsert);
+
+  //     console.log("options: ", options);
+  //   }
+  // }, []);
+
   return (
     <div className="w-full h-screen bg-[wheat]">
-      <h1 className="text-2xl font-semibold text-center mb-10 p-2">
+      <h1 className="p-2 mb-10 text-2xl font-semibold text-center">
         Questions
       </h1>
-      <div className="flex flex-col w-1/2 mx-auto items-start py-5 px-4 border shadow-md rounded-md border-orange-500">
+      <div className="flex flex-col items-start w-1/2 px-4 py-5 mx-auto border border-orange-500 rounded-md shadow-md">
         {questions ? (
           <>
-            <h1 className="text-lg font-semibold text-start mb-10">
+            <h1 className="mb-10 text-lg font-semibold text-start">
               {questions[currentQuestion].question}
             </h1>
-            <div className="flex flex-col gap-5 items-start">
+
+            <div className="flex flex-col items-start gap-5">
               {questions[currentQuestion].incorrect_answers.map(
                 (data, index) => {
                   return (
@@ -47,7 +63,7 @@ const Questions = () => {
             </div>
           </>
         ) : (
-          <h1 className="w-full font-semibold text-2xl text-center text-orange-500 mb-5">
+          <h1 className="w-full mb-5 text-2xl font-semibold text-center text-orange-500">
             Loading...
           </h1>
         )}
