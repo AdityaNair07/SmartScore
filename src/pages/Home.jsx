@@ -12,20 +12,26 @@ const Home = () => {
   const [type, setType] = useState(null);
   const { setQuestions } = useContext(MyContext);
   const { setTotalScore } = useContext(MyContext);
+  const { setScore } = useContext(MyContext);
+
+  const [error, setError] = useState(null);
+
+  const [loading, setLoading] = useState(false);
 
   const getQuestions = async (category, amount, difficulty, type) => {
+    setLoading(true);
     try {
-      await axios
-        .get(
-          `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`
-        )
-        .then((result) => {
-          console.log("result", result);
-          setQuestions(result.data.results);
-        });
+      const result = await axios.get(
+        `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`
+      );
+      setQuestions(result.data.results);
       setTotalScore(amount * 5);
+      setScore(0);
     } catch (error) {
       console.log(error);
+      setError("Failed to fetch questions.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,17 +42,34 @@ const Home = () => {
     console.log("type of category:", typeof category);
   }, [amount, category]);
 
+  const handleSubmit = () => {
+    if (!amount || !category || !difficulty || !type) {
+      alert("Please fill out all fields before starting the quiz.");
+    } else if (amount > 50)
+      alert("The number of questions should be less than or equal to 50");
+  };
+
+  const handleAmountChange = (e) => {
+    const value = parseInt(e.target.value);
+    if (value <= 50 && value > 0) {
+      setAmount(value);
+    } else {
+      setAmount(null);
+    }
+  };
+
   return (
-    <div className="w-full h-screen bg-[wheat] flex flex-col items-center gap-5">
-      <h1 className="p-2 text-3xl font-semibold text-center">SmartScore</h1>
+    <div className="w-full h-screen bg-[#C4D7FF] flex flex-col items-center gap-3">
+      <h1 className="p-5 text-3xl font-semibold text-center">SmartScore</h1>
       <h3 className="p-2 text-xl font-semibold text-center">
         Interesting quizzes with tons of categories
       </h3>
 
-      <div className="flex flex-col w-1/3 gap-4">
+      <div className="flex flex-col w-full gap-4 px-10 mx-auto md:w-1/2 lg:w-1/3 md:px-0">
         <div className="flex items-center justify-between gap-2">
           <input
-            onChange={(e) => setAmount(parseInt(e.target.value))}
+            required
+            onChange={(e) => handleAmountChange(e)}
             className="w-full p-2 bg-white rounded-md shadow-md"
             type="number"
             name="amount"
@@ -181,14 +204,16 @@ const Home = () => {
       </div>
 
       <Link
-        to="/questions"
-        disabled={category && type && difficulty && amount}
-        className={`font-semibold text-lg p-2 rounded-md shadow-md uppercase ${
+        to={category && type && difficulty && amount ? "/questions" : "#"}
+        className={`font-semibold text-lg p-2 rounded-md shadow-md uppercase mt-5 ${
           category && type && difficulty && amount
             ? "text-white bg-teal-400"
             : "text-slate-500 bg-teal-100"
         }`}
-        onClick={() => getQuestions(category, amount, difficulty, type)}
+        onClick={() => {
+          handleSubmit();
+          getQuestions(category, amount, difficulty, type);
+        }}
       >
         Start
       </Link>

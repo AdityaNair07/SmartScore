@@ -6,11 +6,12 @@ const Result = () => {
   const { score } = useContext(MyContext);
   const { totalScore } = useContext(MyContext);
 
+  console.log("Score: ", score);
   console.log("Total score: ", totalScore);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen gap-10">
-      <h1 className="p-3 text-xl font-semibold text-center">
+    <div className="flex flex-col items-center justify-center w-full h-screen gap-10 bg-[wheat]">
+      <h1 className="p-3 text-3xl font-semibold text-center">
         You have scored: {score + "/" + totalScore}
       </h1>
       <Link

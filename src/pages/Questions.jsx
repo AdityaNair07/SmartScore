@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const Questions = () => {
   const { questions } = useContext(MyContext);
+  const { setScore } = useContext(MyContext);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isCorrect, setIsCorrect] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -23,6 +24,10 @@ const Questions = () => {
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsCorrect(option === questions[currentQuestion].correct_answer);
+    if (option === questions[currentQuestion].correct_answer) {
+      console.log("Correct answer selected");
+      setScore((prev) => prev + 5);
+    }
   };
 
   // Handle "Next" button click

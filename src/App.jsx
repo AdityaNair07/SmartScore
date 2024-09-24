@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import { MyContext } from "./MyContext";
 import { useState } from "react";
 import Result from "./pages/Result";
+import Instructions from "./pages/Instructions";
 
 function App() {
   const [questions, setQuestions] = useState();
@@ -23,7 +24,8 @@ function App() {
       >
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Instructions />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/questions" element={<Questions />} />
             <Route path="/result" element={<Result />} />
           </Routes>
