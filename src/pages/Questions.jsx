@@ -13,6 +13,8 @@ const Questions = () => {
   // Shuffle options only when the currentQuestion changes
   useEffect(() => {
     if (questions) {
+      console.log(questions);
+
       const options = [...questions[currentQuestion].incorrect_answers];
       const randomIndex = Math.floor(Math.random() * (options.length + 1));
       options.splice(randomIndex, 0, questions[currentQuestion].correct_answer);
