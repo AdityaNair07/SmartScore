@@ -1,7 +1,6 @@
 import axios from "axios";
-import { useContext, useEffect } from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // useNavigate for programmatic navigation
 import { MyContext } from "../MyContext";
 
 const Home = () => {
@@ -10,24 +9,24 @@ const Home = () => {
   const [difficulty, setDifficulty] = useState(null);
   const [type, setType] = useState(null);
   const { setQuestions, setTotalScore, setScore } = useContext(MyContext);
-  const [error, setError] = useState(null); // Error state
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); // Hook for navigation
 
   const getQuestions = async (category, amount, difficulty, type) => {
     setLoading(true);
-    setError(null); // Clear the error before making a new request
+    setError(null);
     try {
       const result = await axios.get(
         `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`
       );
-
       const responseCode = result.data.response_code;
-
       if (responseCode === 0) {
-        // Success
         setQuestions(result.data.results);
         setTotalScore(amount * 5);
         setScore(0);
+        navigate("/questions"); // Navigate to questions page on success
       } else if (responseCode === 1) {
         setError("No results found for the specified criteria.");
       } else if (responseCode === 2) {
@@ -42,7 +41,7 @@ const Home = () => {
 
   const handleSubmit = () => {
     if (!amount || !category || !difficulty || !type) {
-      setError("Please fill out all fields."); // Set error if fields are empty
+      setError("Please fill out all fields correctly.");
     } else if (amount > 50) {
       setError("The number of questions should be less than or equal to 50.");
     } else {
@@ -55,32 +54,6 @@ const Home = () => {
     setAmount(value > 0 && value <= 50 ? value : null);
   };
 
-  useEffect(() => {
-    console.log("amount:", amount);
-    console.log("type of amount:", typeof amount);
-    console.log("category:", category);
-    console.log("type of category:", typeof category);
-  }, [amount, category]);
-
-  // const handleSubmit = () => {
-  //   if (!amount || !category || !difficulty || !type) {
-  //     alert("Please fill out all fields before starting the quiz.");
-  //   } else if (amount > 50) {
-  //     alert("The number of questions should be less than or equal to 50");
-  //   } else {
-  //     getQuestions(category, amount, difficulty, type);
-  //   }
-  // };
-
-  // const handleAmountChange = (e) => {
-  //   const value = parseInt(e.target.value);
-  //   if (value <= 50 && value > 0) {
-  //     setAmount(value);
-  //   } else {
-  //     setAmount(null);
-  //   }
-  // };
-
   return (
     <div className="w-full h-screen bg-[#C4D7FF] flex flex-col items-center gap-3">
       <h1 className="p-5 text-3xl font-semibold text-center">SmartScore</h1>
@@ -89,6 +62,7 @@ const Home = () => {
       </h3>
 
       <div className="flex flex-col w-full gap-4 px-10 mx-auto md:w-1/2 lg:w-1/3 md:px-0">
+        {error && <p className="text-red-500">{error}</p>} {/* Error Display */}
         <div className="flex items-center justify-between gap-2">
           <input
             required
@@ -101,7 +75,7 @@ const Home = () => {
             max="50"
           />
         </div>
-
+        {/* Category Select */}
         <div className="flex items-center justify-start gap-2">
           <select
             className="w-full p-2 rounded-md shadow-md"
@@ -189,7 +163,7 @@ const Home = () => {
             </option>
           </select>
         </div>
-
+        {/* Difficulty Select */}
         <div className="flex items-center justify-start gap-2">
           <select
             className="w-full p-2 rounded-md shadow-md"
@@ -202,7 +176,7 @@ const Home = () => {
             <option value="hard">Hard</option>
           </select>
         </div>
-
+        {/* Type Select */}
         <div className="flex items-center justify-start gap-2">
           <select
             className="w-full p-2 rounded-md shadow-md"
@@ -214,20 +188,17 @@ const Home = () => {
             <option value="boolean">True/False</option>
           </select>
         </div>
+        {/* Submit Button */}
+        <button
+          disabled={loading}
+          onClick={handleSubmit}
+          className={`font-semibold ${
+            loading ? "bg-gray-400" : "bg-blue-500"
+          } p-2 rounded-md text-white`}
+        >
+          {loading ? "Loading..." : "Start"}
+        </button>
       </div>
-
-      <Link
-        to={category && type && difficulty && amount ? "/questions" : "#"}
-        className={`font-semibold text-lg p-2 rounded-md shadow-md uppercase mt-5 bg-[#87A2FF] ${
-          !category || !type || !difficulty || !amount ? "opacity-50" : ""
-        }`}
-        onClick={handleSubmit}
-      >
-        Start Quiz
-      </Link>
-
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };

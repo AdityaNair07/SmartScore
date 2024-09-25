@@ -57,7 +57,7 @@ const Questions = () => {
         Questions
       </h1>
       <div className="flex flex-col items-start w-1/2 px-4 py-5 mx-auto border border-orange-500 rounded-md shadow-md text-wrap">
-        {questions ? (
+        {questions && (
           <>
             <h1 className="w-full mb-10 text-lg font-semibold text-start text-wrap">
               {questions[currentQuestion].question}
@@ -83,11 +83,10 @@ const Questions = () => {
               ))}
             </div>
           </>
-        ) : (
-          <h1 className="w-full mb-5 text-2xl font-semibold text-center text-orange-500">
-            Loading...
-          </h1>
         )}
+        {/* <h1 className="w-full mb-5 text-2xl font-semibold text-center text-orange-500">
+            Loading...
+          </h1> */}
 
         <Link
           to={currentQuestion === questions?.length - 1 ? "/result" : null}
