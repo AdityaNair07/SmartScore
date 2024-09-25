@@ -55,7 +55,7 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-[#C4D7FF] flex flex-col items-center gap-3">
+    <div className="w-full h-screen bg-[#C4D7FF] flex flex-col items-center gap-4 justify-center">
       <h1 className="p-5 text-3xl font-semibold text-center">SmartScore</h1>
       <h3 className="p-2 text-xl font-semibold text-center">
         Interesting quizzes with tons of categories
